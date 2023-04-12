@@ -1,6 +1,9 @@
 package com.dans.multi.pro.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +24,19 @@ public class JobController {
     private JobFeign jobFeign;
 
     @GetMapping
-    public List<JobDto> listJob() {
-        return jobFeign.getListJob();
+    public Object listJob() {
+
+        List<JobDto> listJob = jobFeign.getListJob();
+        Map<String,List<JobDto>> tamp = new HashMap<>();  
+        for (JobDto jobDto : listJob) {
+
+            if(!tamp.containsKey(jobDto.getLocation())){
+                tamp.put(jobDto.getLocation(), new ArrayList<>());
+            }
+
+            tamp.get(jobDto.getLocation()).add(jobDto);
+        }
+        return tamp;
     }
 
     @GetMapping("/{id}")
